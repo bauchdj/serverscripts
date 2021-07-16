@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>HTML IDE</title>
+		<meta charset="UTF-8" />
+		<style>
+* {margin: 0; padding: 0; user-select:none;}
+*:not(textarea){font: 14px Arial;}
+textarea {
+	padding: 3px;
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+}
+		</style>
+	</head>
+	<body>
+		<input type="file" id="upload" style="display:none"><button onclick="upload.click()">Upload</button>
+		<button id="download" title="Ctrl + S">Download</button><a id="a" style="display:none"></a>
+		<button id="tryit" title="Ctrl + Enter">Run</button><span title="Alerts you of Errors"> <input type="checkbox" id="errCatch" /> Errors?</span>
+		<button id="save">Save to Cache</button>
+		<button id="load">Load from Cache</button>
+		<input id="fname"placeholder="File Name" />
+		<span id="stats">Line 1 of 1; Size: 0 bytes</span>
+		<textarea id="code" spellcheck="false"></textarea>
+		<script>
+var font = 15;
+const
+	$=x=>{return document.querySelector(x)},
+	upload = $("#upload"),
+	download = $("#download"),
+	tryit = $("#tryit"),
+	errCatch = $("#errCatch"),
+	save = $("#save"),
+	load = $("#load"),
+	fname = $("#fname"),
+	code = $("#code"),
+	stats = $("#stats");
+
+setInterval(()=>{
+	document.body.style.height = (innerHeight-40)+"px";
+	code.style.height = (innerHeight-(code.offsetTop+9))+"px";
+	code.style.width = (innerWidth-9)+"px";
+}, 10);
+
+download.onclick = () => {
+	var a = document.getElementById("a");
+	a.href = URL.createObjectURL(new Blob([code.value], {type: "text/html"}));
+	a.download = String(fname.value)?fname.value:"index.html";
+	a.click();
+}
+
+save.onclick = () => {
+	if (code.value) {
+		if (localStorage.getItem("IDECODE")) {
+			if (confirm("Are you sure? This will replace the code already in the cache!")) {
+				localStorage.setItem("IDECODE", code.value);
+			}
+		} else {
+			localStorage.setItem("IDECODE", code.value);
+		}
+	}
+}
+
+load.onclick = () => {
+	if (localStorage.getItem("IDECODE")) {
+		if (code.value) {
+			if (confirm("Are you sure? This will replace the code already in the editor!")) {
+				code.value = localStorage.getItem("IDECODE");
+			}
+		} else {
+			code.value = localStorage.getItem("IDECODE");
+		}
+	}
+}
+
+var blobPrefix = "<script>window.onerror=(msg,url,lNo,cNo,error)=>{alert(`Error! Line ${lNo}, Column ${(lNo==1?cNo-126:cNo)}: ${msg}`)}</script"+">";
+tryit.onclick = () => { window.open(URL.createObjectURL(new Blob([(errCatch.checked?blobPrefix:"")+code.value],{type:'text/html'}))) }
+document.onkeydown = (e) => {
+	if (e.ctrlKey) {
+		if (e.key == "Enter") { tryit.click() }
+		if (e.key == "s") { download.click() }
+	}
+}
+
+code.onkeydown = (e) => {
+	if (e.key == 'Tab') {
+		e.preventDefault();
+		var start = code.selectionStart;
+		var end = code.selectionEnd;
+
+		code.value = code.value.substring(0, start) + "\t" + code.value.substring(end);
+
+		code.selectionStart = code.selectionEnd = start + 1;
+	}
+	if (e.key == "=" && e.ctrlKey && e.altKey) {
+		font++
+		code.style.fontSize = font+"px";
+	}
+	if (e.key == "-" && e.ctrlKey && e.altKey) {
+		if(font > 0){font--}
+		code.style.fontSize = font+"px";
+	}
+}
+
+
+function autoIndent(c) {
+	var start = code.selectionStart;
+	var v = code.value;
+	var thisLine = "";
+	var indentation = 0;
+	for (var i = start-2; i >= 0 && v[i] != "\n"; i--) {
+		thisLine = v[i] + thisLine;
+	}
+	for (var i = 0; i < thisLine.length && thisLine[i] == c; i++) {
+		indentation++;
+	}
+	code.value = v.slice(0, start) + c.repeat(indentation) + v.slice(start);
+	code.selectionStart = code.selectionEnd = start + indentation;
+}
+
+code.onkeyup = function(e){
+	if (e.key == "Enter" && !(e.ctrlKey||e.altKey||e.shiftKey)) {
+		autoIndent(" ");
+		autoIndent("	");
+	}
+	var l = code.value.length;
+	var sl = code.value.substr(0, code.selectionStart).split("\n").length;
+	var n = (code.value.match(/\n/g) || []).length;
+	stats.innerHTML = "Line "+sl+" of "+(n+1)+"; Size: "+code.value.length+(code.value.length==1?" byte":" bytes");
+}
+
+fname.oninput = () => {
+	document.title = String(fname.value)?fname.value+" - HTML IDE":"HTML IDE";
+}
+
+function readFileContent(file) {
+	const reader = new FileReader();
+	return new Promise((resolve, reject) => {
+		reader.onload = event => resolve(event.target.result);
+		reader.onerror = error => reject(error);
+		reader.readAsText(file);
+	});
+}
+
+function placeFileContent(target, file) {
+	readFileContent(file).then(content => {
+		target.value = content
+	}).catch(error => console.log(error))
+}
+
+upload.onchange = () => {
+	const input = event.target
+	if ('files' in input && input.files.length > 0) {
+		placeFileContent(code, input.files[0]);
+		fname.value = upload.value.split(/(\\|\/)/g).pop();
+		document.title = String(fname.value)?fname.value+" - HTML IDE":"HTML IDE";
+		var l = code.value.length;
+		var sl = code.value.substr(0, code.selectionStart).split("\n").length;
+		var n = (code.value.match(/\n/g) || []).length;
+		stats.innerHTML = "Line "+sl+" of "+(n+1)+"; Size: "+code.value.length+(code.value.length==1?" byte":" bytes");
+	}
+}
+		</script>
+	</body>
+</html>
