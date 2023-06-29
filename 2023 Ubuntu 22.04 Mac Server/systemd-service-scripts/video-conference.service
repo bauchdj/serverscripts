@@ -1,0 +1,16 @@
+[Unit]
+Description=Nodejs Video Conference App
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/node-apps/node-systemd-env-file.sh
+WorkingDirectory=/node-apps/Video-Call-App-NodeJS
+ExecStart=node /node-apps/Video-Call-App-NodeJS/src/app.js
+StandardOutput=append:/node-apps/Video-Call-App-NodeJS/logs/output.log
+StandardError=append:/node-apps/Video-Call-App-NodeJS/logs/error.log
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,56 @@
+# https://www.apalrd.net/posts/2021/systemd/
+# sudo touch /etc/systemd/system/myservice.service
+# sudo chmod 664 /etc/systemd/system/myservice.service
+# sudo nano /etc/systemd/system/myservice.service
+
+# sudo systemctl daemon-reload
+# sudo systemctl start myservice
+# sudo systemctl enable myservice
+
+[Unit]
+Description=A Cool Service, Wow!
+After=network-online.target
+
+[Service]
+ConditionPathExists=/mnt/jfdrive
+#ExecStart=/usr/bin/python3 /home/pi/myservice/main.py -a -b -c -d
+ExecStart=/.nvm/versions/node/v20.3.0/bin/node /proxy/proxy.js
+StandardOutput=/proxy/logs/output.log
+StandardError=/proxy/logs/error.log
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+#################################################################################################################
+# place in /etc/systemd/system/whatever.service and install with `systemd install whatever.service`
+# note that if you change this file you will need to run `systemctl daemon-reload` to get systemd to notice
+[Unit]
+Description=A good service description
+
+# After networking because we need that
+After=network.target
+
+[Service]
+
+# Simple services don't do any forking / background nonsence
+Type=simple
+
+# User with which to run the service
+User=pi
+
+# Any setup we need to do, specifying the shell because otherwise who knows what's up
+ExecStartPre=/bin/bash -c 'echo "hello world"'
+
+# Set the working directory for the application
+WorkingDirectory=/my_app/
+
+# Command to run the application
+ExecStart=/my_app/my_app.bin
+
+# Restart policy, only on failure
+Restart=on-failure
+
+[Install]
+# Start the service before we get to multi-user mode
+WantedBy=multi-user.target

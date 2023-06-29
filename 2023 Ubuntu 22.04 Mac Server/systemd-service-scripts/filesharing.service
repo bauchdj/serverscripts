@@ -1,0 +1,16 @@
+[Unit]
+Description=Nodejs file upload and download website
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/node-apps/node-systemd-env-file.sh
+WorkingDirectory=/node-apps/Node.js-LAN-File-Sharing-master
+ExecStart=node /node-apps/Node.js-LAN-File-Sharing-master/main.js 3030 /mnt/jfdrive/guest
+StandardOutput=append:/node-apps/Node.js-LAN-File-Sharing-master/logs/output.log
+StandardError=append:/node-apps/Node.js-LAN-File-Sharing-master/logs/error.log
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+

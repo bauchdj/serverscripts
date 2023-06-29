@@ -1,0 +1,86 @@
+searchformovie() {
+	ls /mnt/jellyfin/Movies/ | grep 'mp4\|srt' | grep -i "$1"
+}
+dl-youtube() {
+	youtube-dl --ignore-errors --format bestaudio --extract-audio --audio-format mp3 --audio-quality 160K --output "%(title)s.%(ext)s"  "$1"
+}
+#dl-youtubeplaylist() {
+#	youtube-dl --ignore-errors --format bestaudio --extract-audio --audio-format mp3 --audio-quality 160K --output "%(title)s.%(ext)s" --yes-playlist "$1"
+#}
+#system
+alias x='exit'
+alias ..='cd ..'
+alias mem='free -m'
+alias swapclear='swapoff -a && swapon -a'
+alias ports='sudo lsof -i -P -n | grep LISTEN'
+alias statall='service --status-all'
+alias prcnohup='ps aux | grep ' #'ps xw | grep '
+alias cpv='rsync -ah --info=progress2'
+alias viconfig='vi ~/.vimrc'
+alias status='systemctl status'
+alias restart='systemctl restart'
+alias stop='systemctl stop'
+alias sysprocesses='dietpi-process_tool'
+alias sysmdreload='systemctl daemon-reload'
+
+#webserver
+alias ngconfig='vi /etc/nginx/sites-available/nc.lowcostmdm.com.conf'
+alias jngconfig='vi /etc/nginx/sites-available/jf.lowcostmdm.com.conf'
+alias tngconfig='vi /etc/nginx/sites-available/term.lowcostmdm.com.conf'
+#alias sqconfig='vi /etc/squid/squid.conf'
+alias ngreload='systemctl reload nginx.service'
+alias ngrestart='systemctl restart nginx.service'
+
+#jellyfin
+alias movies="cd /mnt/jellyfin//Movies"
+alias countmovies="ls -l /mnt/jellyfin/Movies/ | grep .mp4 | wc -l"
+alias runtimejellyfin="ps -eo pid,lstart,cmd | grep -v grep | grep /usr/bin/jellyfin"
+
+#nextcloud
+alias nccheck="find /mnt/nextclouddrive/ -name 'Notes'"
+alias ncconfig='vi /var/www/nc.lowcostmdm.com/nextcloud/config/config.php'
+alias nccronstatus='systemctl status nextcloudcron.timer'
+alias ncrestart='manageprocesses.sh restart nc'
+alias ncstop='manageprocesses.sh stop nc'
+alias ncmaitenancemodeoff='sudo -u www-data php /var/www/nc.lowcostmdm.com/nextcloud/occ maintenance:mode --off'
+alias occ='sudo -u www-data php /var/www/nc.lowcostmdm.com/nextcloud/occ'
+alias hupscanfiles='nohup sudo -u www-data php /var/www/nc.lowcostmdm.com/nextcloud/occ files:scan --all &'
+alias scanfiles='sudo -u www-data php /var/www/nc.lowcostmdm.com/nextcloud/occ files:scan --all'
+alias ncrepair='sudo -u www-data php /var/www/nc.lowcostmdm.com/nextcloud/occ maintenance:repair'
+
+#php
+alias phpconfig='vi /etc/php/7.4/fpm/php.ini'
+
+#updating
+alias update='sudo apt update;echo;sudo apt-get update'
+alias upgradeable='sudo apt list --upgradeable'
+alias upgrade='sudo apt upgrade;echo;sudo apt-get upgrade'
+alias autorm='sudo apt-get autoremove'
+
+#disk
+#make sure both mnt and umnt commands have correct /dev/sd* for corresponding drives
+alias ncmnt="sudo mount -t exfat -o uid=www-data,gid=www-data `sudo blkid -o list  /dev/sd* | grep 5F85-363F | sed 's/exfat.*$//g' | sed 's/ *$//'` /mnt/nextclouddrive/;chown -R 750 /mnt/nextclouddrive/"
+alias ncumnt="manageprocesses.sh stop nc;sudo umount -t exfat `sudo blkid -o list  /dev/sd* | grep 5F85-363F | sed 's/exfat.*$//g' | sed 's/ *$//'` /mnt/nextclouddrive"
+alias jfmnt="sudo mount -t exfat -o uid=jellyfin,gid=jellyfin `sudo blkid -o list  /dev/sd* | grep 5D8E-77F1 | sed 's/exfat.*$//g' | sed 's/ *$//'` /mnt/jellyfin/;chown -R 750 /mnt/jellyfin/"
+alias jfumnt="systemctl stop jellyfin.service;sudo umount -t exfat `sudo blkid -o list  /dev/sd* | grep 5D8E-77F1 | sed 's/exfat.*$//g' | sed 's/ *$//'` /mnt/jellyfin/"
+alias diskinfo='sudo blkid -o list  /dev/sd*'
+#alias mntperm='sudo chown -R www-data:www-data /mnt/nextclouddrive ; sudo chmod -R 775 /mnt/nextclouddrive'
+
+#bashrc
+alias vialias='vi ~/.bash_aliases'
+alias rbtalias='source ~/.bashrc'
+alias rbtshell='exec bash'
+
+#script access
+alias scripts='cd /usr/local/bin; ls'
+
+#git aliases
+alias ga='git add'
+alias ga.='git add -u .'
+alias gcommit='git commit -m'
+alias gclone='git clone'
+alias gpush='git push'
+alias gpull='git pull'
+alias gl='git log'
+alias gs='git status'
+alias gcheck='git checkout'

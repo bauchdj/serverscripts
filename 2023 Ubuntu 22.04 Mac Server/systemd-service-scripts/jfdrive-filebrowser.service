@@ -1,0 +1,13 @@
+[Unit]
+Description=Filebrowser in /mnt/jfdrive directory
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/filebrowser -a 0.0.0.0 -r /mnt/jfdrive/
+StandardOutput=journal
+StandardError=journal
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

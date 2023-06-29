@@ -1,0 +1,15 @@
+[Unit]
+Description=Nodejs HTTPS proxy
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/node-apps/node-systemd-env-file.sh
+WorkingDirectory=/node-apps/proxy
+ExecStart=node /node-apps/proxy/proxy.js
+StandardOutput=append:/node-apps/proxy/logs/output.log
+StandardError=append:/node-apps/proxy/logs/error.log
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
