@@ -11,5 +11,5 @@
 /dev/disk/by-uuid/0372-180D /boot/efi vfat defaults 0 1
 /swap.img	none	swap	sw	0	0
 #personal external drive
-LABEL=jfdrive /mnt/jfdrive exfat defaults,uid=1000,gid=1000,umask=0000,nofial 0 2
+LABEL=jfdrive /mnt/jfdrive exfat defaults,uid=1000,gid=1000,umask=0000,nofail 0 2
 
