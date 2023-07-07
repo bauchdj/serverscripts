@@ -19,8 +19,8 @@ proxy.on('error', (err, req, res) => { // Error event listener
 const options = { // Read SSL certificate and key files
   cert: fs.readFileSync('/etc/letsencrypt/live/f.talkofchrist.org/fullchain.pem'),
   key: fs.readFileSync('/etc/letsencrypt/live/f.talkofchrist.org/privkey.pem'),
-  // cert: fs.readFileSync('proxy/talkofchrist-key-cert/talkofchrist.org_ssl_certificate.cer'),
-  // key: fs.readFileSync('proxy/talkofchrist-key-cert/_.talkofchrist.org_private_key.key'),
+  // cert: fs.readFileSync('talkofchrist-key-cert/talkofchrist.org_ssl_certificate.cer'),
+  // key: fs.readFileSync('talkofchrist-key-cert/_.talkofchrist.org_private_key.key'),
 };
 
 const getTargetPort = (req) => { // Gets port based on subdomain
@@ -36,6 +36,8 @@ const getTargetPort = (req) => { // Gets port based on subdomain
       return 8080;
     case 'drop':
       return 3030;
+    case 'share':
+      return 3001;
     case 'call':
     case 'meet':
       return 3000;
