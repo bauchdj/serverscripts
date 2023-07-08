@@ -1,0 +1,15 @@
+[Unit]
+Description=Nodejs Airdrop
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/node-apps/node-systemd-env-file.sh
+WorkingDirectory=/node-apps/PairDrop
+ExecStart=node /node-apps/PairDrop/index.js --include-ws-fallback --port 3001
+StandardOutput=append:/node-apps/PairDrop/logs/output.log
+StandardError=append:/node-apps/PairDrop/logs/error.log
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
